@@ -1,3 +1,73 @@
-💪 Mein Fitness Coach
-Gewichte und Wiederholungen speichern
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111827">
+<title>Mein Fitness Coach</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#111827;color:#f9fafb;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+header{padding:24px 16px 12px;text-align:center}h1{font-size:29px;margin:0 0 6px}.sub{color:#9ca3af}
+main{padding:8px 14px 40px;max-width:720px;margin:auto}.card{background:#1f2937;border-radius:20px;padding:18px;margin:14px 0;box-shadow:0 4px 18px #0004}
+h2{margin:0 0 8px;font-size:23px}.muted{color:#9ca3af}.btn{width:100%;border:0;border-radius:14px;padding:15px;margin-top:10px;font-size:18px;font-weight:700;background:#2563eb;color:#fff}.secondary{background:#374151}
+.back{background:transparent;border:1px solid #4b5563}.exercise svg{width:100%;height:210px;background:#f3f4f6;border-radius:14px;margin:10px 0}
+.exercise .name{font-size:21px;font-weight:800}.row{display:flex;gap:10px}.row>*{flex:1}label{display:block;margin-top:10px;color:#d1d5db;font-size:14px}
+input{width:100%;margin-top:5px;padding:12px;border-radius:11px;border:1px solid #4b5563;background:#111827;color:#fff;font-size:17px}
+.date{font-size:16px}.save{margin-top:12px}.stat{font-size:32px;font-weight:800}
+svg .line{stroke:#111827;stroke-width:8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+svg .thin{stroke:#111827;stroke-width:5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+svg .body{stroke:#111827;stroke-width:10;fill:none;stroke-linecap:round}
+svg .machine{stroke:#374151;stroke-width:8;fill:#d1d5db;stroke-linejoin:round}
+svg .accent{stroke:#2563eb;stroke-width:7;fill:none;stroke-linecap:round;stroke-linejoin:round}
+svg .head{fill:#111827}
+.small{font-size:14px;color:#9ca3af;margin-top:5px}
+</style>
+</head>
+<body>
+<header><h1>💪 Mein Fitness Coach</h1><div class="sub">Tag A & Tag B · Gewichte und Wiederholungen speichern</div></header>
+<main id="app"></main>
+<script>
+const today=()=>new Date().toLocaleDateString("de-AT");
+const exercises={
+A:[
+["Brustpresse",`<svg viewBox="0 0 500 240"><rect class="machine" x="190" y="82" width="105" height="110" rx="18"/><path class="line" d="M205 192h170M220 190l-20 28M355 190l20 28M245 82V45M270 82V45"/><circle class="head" cx="244" cy="55" r="15"/><path class="body" d="M244 72v60M244 92l-48-25M244 92l55-25M196 67l-30-20M299 67l30-20"/><path class="accent" d="M160 47h-45M340 47h45"/></svg>`],
+["Rudermaschine",`<svg viewBox="0 0 500 240"><path class="machine" d="M180 190h190l-35-110h-75z"/><path class="machine" d="M255 80h55v75h-55z"/><circle class="head" cx="282" cy="48" r="15"/><path class="body" d="M282 64v58M282 78l-42 35M282 78l42 35M240 113l-35 30M324 113l35 30"/><path class="accent" d="M205 143h-50M359 143h50"/><path class="thin" d="M155 143h60M345 143h60"/></svg>`],
+["Latzug",`<svg viewBox="0 0 500 240"><path class="machine" d="M110 205V35h30v170M390 205V35h-30v170M110 35h280"/><path class="machine" d="M185 145h130v50H185z"/><circle class="head" cx="250" cy="88" r="15"/><path class="body" d="M250 104v62M250 116l-42 28M250 116l42 28M208 144l-8 48M292 144l8 48"/><path class="accent" d="M185 58h130M210 58v30M290 58v30"/></svg>`],
+["Reverse Butterfly",`<svg viewBox="0 0 500 240"><rect class="machine" x="225" y="90" width="50" height="120" rx="12"/><path class="machine" d="M215 125h-55v65h55M285 125h55v65h-55"/><circle class="head" cx="250" cy="62" r="15"/><path class="body" d="M250 78v70M250 95l-75 45M250 95l75 45M175 140l-20 35M325 140l20 35"/><path class="accent" d="M175 140l-50-35M325 140l50-35"/></svg>`],
+["Trizeps am Kabel",`<svg viewBox="0 0 500 240"><path class="machine" d="M105 205V35h30v170M105 35h65"/><circle class="head" cx="250" cy="65" r="15"/><path class="body" d="M250 80v65M250 95l-38 35M250 95l38 35M212 130v55M288 130v55"/><path class="accent" d="M170 70h80M250 70v45M205 115h90"/><path class="thin" d="M205 115l-10 70M295 115l10 70"/></svg>`],
+["Bauchmaschine",`<svg viewBox="0 0 500 240"><path class="machine" d="M175 205h170M205 205V95h90v110M205 95h-45v35h45M295 95h45v35h-45"/><circle class="head" cx="250" cy="55" r="15"/><path class="body" d="M250 70v55M250 82l-35 25M250 82l35 25M215 107l-5 55M285 107l5 55"/><path class="accent" d="M160 75h55M285 75h55"/></svg>`]
+],
+B:[
+["Beinpresse",`<svg viewBox="0 0 500 240"><path class="machine" d="M90 205h320M125 205V95h90v110M245 65h150v35H245z"/><circle class="head" cx="185" cy="72" r="15"/><path class="body" d="M185 88v58M185 100l-35 25M185 100l35 25M150 125l45 55M220 125l45 55"/><path class="accent" d="M245 65l-45 115M395 65l-45 115"/></svg>`],
+["Beinbeuger",`<path d=""></path><svg viewBox="0 0 500 240"><path class="machine" d="M130 205h260M180 205V95h115v110M180 95h-35v35h35"/><circle class="head" cx="240" cy="62" r="15"/><path class="body" d="M240 77v62M240 90l-35 30M240 90l35 30M205 120l30 45M275 120l-55 40"/><path class="accent" d="M220 160l55 20M275 180l45-10"/></svg>`],
+["Brustpresse",`<svg viewBox="0 0 500 240"><rect class="machine" x="190" y="82" width="105" height="110" rx="18"/><path class="line" d="M205 192h170M220 190l-20 28M355 190l20 28M245 82V45M270 82V45"/><circle class="head" cx="244" cy="55" r="15"/><path class="body" d="M244 72v60M244 92l-48-25M244 92l55-25M196 67l-30-20M299 67l30-20"/><path class="accent" d="M160 47h-45M340 47h45"/></svg>`],
+["Rudermaschine",`<svg viewBox="0 0 500 240"><path class="machine" d="M180 190h190l-35-110h-75z"/><path class="machine" d="M255 80h55v75h-55z"/><circle class="head" cx="282" cy="48" r="15"/><path class="body" d="M282 64v58M282 78l-42 35M282 78l42 35M240 113l-35 30M324 113l35 30"/><path class="accent" d="M205 143h-50M359 143h50"/><path class="thin" d="M155 143h60M345 143h60"/></svg>`],
+["Außenrotation Schulter",`<svg viewBox="0 0 500 240"><path class="machine" d="M105 205V45h30v160"/><circle class="head" cx="245" cy="62" r="15"/><path class="body" d="M245 78v70M245 95l-35 25M245 95l35 25M210 120v50M280 120v50"/><path class="accent" d="M210 120h-65M280 120h65M145 120v55M355 120v55"/><path class="thin" d="M145 175l-25 25M355 175l25 25"/></svg>`],
+["Bauchmaschine",`<svg viewBox="0 0 500 240"><path class="machine" d="M175 205h170M205 205V95h90v110M205 95h-45v35h45M295 95h45v35h-45"/><circle class="head" cx="250" cy="55" r="15"/><path class="body" d="M250 70v55M250 82l-35 25M250 82l35 25M215 107l-5 55M285 107l5 55"/><path class="accent" d="M160 75h55M285 75h55"/></svg>`]
+]};
 
+function get(k){try{return JSON.parse(localStorage.getItem("mfc_"+k)||"{}")}catch(e){return {}}}
+function put(k,v){localStorage.setItem("mfc_"+k,JSON.stringify(v))}
+function home(){
+document.querySelector("#app").innerHTML=`
+<div class="card"><h2>🏋️ Training</h2><p class="muted">Wähle deinen Trainingstag.</p>
+<button class="btn" onclick="day('A')">Tag A</button><button class="btn" onclick="day('B')">Tag B</button></div>
+<div class="card"><h2>📈 Trainingsverlauf</h2><button class="btn secondary" onclick="historyView()">Verlauf anzeigen</button></div>`;
+}
+function day(d){
+const date=get("date"+d).date||today();
+document.querySelector("#app").innerHTML=`<button class="btn back" onclick="home()">← Startseite</button>
+<div class="card"><h2>Tag ${d}</h2><label>Datum<input class="date" id="date${d}" type="date" value="${date.split(".").reverse().join("-")}" onchange="saveDate('${d}')"></label></div>
+${exercises[d].map((e,i)=>{let x=get(e[0]+d);return `<div class="card exercise"><div class="name">${i+1}. ${e[0]}</div>${e[1]}
+<div class="row"><label>Gewicht (kg)<input id="w${d}${i}" type="number" step="0.5" value="${x.weight||""}" placeholder="kg"></label>
+<label>Wiederholungen<input id="r${d}${i}" type="number" value="${x.reps||""}" placeholder="10–12"></label></div>
+<button class="btn secondary save" onclick="saveEx('${e[0]}','${d}',${i})">Speichern</button></div>`}).join("")}`;
+}
+function saveDate(d){let v=document.querySelector("#date"+d).value;if(v)localStorage.setItem("mfc_date"+d,JSON.stringify({date:v.split("-").reverse().join(".")}));}
+function saveEx(name,d,i){put(name+d,{weight:document.querySelector("#w"+d+i).value,reps:document.querySelector("#r"+d+i).value,date:today()});alert("Gespeichert ✓");}
+function historyView(){
+let rows=[];["A","B"].forEach(d=>exercises[d].forEach(e=>{let x=get(e[0]+d);if(x.weight||x.reps)rows.push(`<p><b>Tag ${d} – ${e[0]}</b><br>${x.weight||"—"} kg · ${x.reps||"—"} Wdh. · ${x.date||""}</p>`)}));
+document.querySelector("#app").innerHTML=`<button class="btn back" onclick="home()">← Startseite</button><div class="card"><h2>📈 Trainingsverlauf</h2>${rows.length?rows.join(""):"<p class='muted'>Noch keine Einträge.</p>"}</div>`;
+}
+home();
+</script></body></html>
